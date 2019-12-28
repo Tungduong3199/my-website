@@ -1,82 +1,119 @@
-import React, {useState} from 'react';
-import TextField from "@material-ui/core/TextField";
-import Grid from "@material-ui/core/Grid";
+import React, {useState} from 'react'
+import useForm from 'react-hook-form'
+import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
+import VisibilityOffOutlinedIcon from '@material-ui/icons/VisibilityOffOutlined';
+import {auth, firestore} from "../../firebaseConfig"
+import renderFields from 'mui-fields'
+import InputAdornment from "@material-ui/core/InputAdornment";
 import Button from "@material-ui/core/Button";
-import {auth, firestore} from '../../firebaseConfig';
-import {useHistory} from 'react-router-dom'
+import Typography from "@material-ui/core/Typography";
+import {useHistory} from "react-router-dom";
 
 export default function SignUp() {
+
     const history = useHistory();
-    const [email, setEmail] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState(0);
-    const [add, setAdd] = useState('');
-    const [password, setPassword] = useState('');
+    const [formValues, setFormValues] = useState(null)
+    const [error, setError] = useState('')
+    const methods = useForm()
+    const [show, setShow] = useState(false)
 
-    function handleChangeEmail(e) {
-        setEmail(e.target.value)
+    const _renderFieds = () => {
+        return renderFields({
+            firstName: {label: 'First Name', fullWidth: false, required: true, autoFocus: true},
+            lastName: {label: 'Last Name', fullWidth: false, required: true, autoFocus: true},
+            phoneNumber: {label: 'Phone Number', required: true, autoFocus: true},
+            address: {label: 'Address', required: true, autoFocus: true},
+            email: {label: 'Email', required: true, autoFocus: true},
+            password: {
+                label: 'Password',
+                type: show ? 'text' : 'password',
+                required: true,
+                InputProps: {
+                    shrink: true,
+                    startAdornment: <InputAdornment
+                        position="start"> </InputAdornment>,
+                    endAdornment: <InputAdornment
+                        style={{width: 50}}
+                        position="end">
+                        {
+                            !show ?
+                                <VisibilityOffOutlinedIcon
+                                    onClick={() => setShow(!show)}
+                                />
+                                :
+                                <VisibilityOutlinedIcon
+                                    onClick={() => setShow(!show)}
+                                />
+                        }
+                    </InputAdornment>,
+                }
+
+            },
+            confirmPassword: {
+                label: 'ConfirmPassword',
+                type: show ? 'text' : 'password',
+                required: true,
+                InputProps: {
+                    shrink: true,
+                    startAdornment: <InputAdornment
+                        position="start">  </InputAdornment>,
+                    endAdornment: <InputAdornment
+                        style={{width: 50}}
+                        position="end">
+                        {
+                            !show ?
+                                <VisibilityOffOutlinedIcon
+                                    onClick={() => setShow(!show)}
+                                />
+                                :
+                                <VisibilityOutlinedIcon
+                                    onClick={() => setShow(!show)}
+                                />
+                        }
+                    </InputAdornment>,
+                }
+            },
+        }, methods)
     }
 
-    function handleChangeFirstName(e) {
-        setFirstName(e.target.value)
-    }
-
-    function handleChangeLastName(e) {
-        setLastName(e.target.value)
-    }
-
-    function handleChangePhoneNumber(e) {
-        setPhoneNumber(e.target.value)
-    }
-
-    function handleChangeAdd(e) {
-        setAdd(e.target.value)
-    }
-
-    function handleChangePassword(e) {
-        setPassword(e.target.value)
-    }
-
-    const handleClickSignUp = () => {
-            console.log('start')
-        auth.createUserWithEmailAndPassword(email, password)
-            .then((data) => {
-                console.log(data,'aaaa')
-                firestore.collection('user')
-                    .doc(email)
+    const _onSubmit = async (data) => {
+        setFormValues(data)
+        try {
+            const result = await auth.createUserWithEmailAndPassword(data.email, data.password)
+            if (result) {
+                console.log('signUp', data)
+                firestore.collection('user').doc(data.email)
                     .set({
-                        email: email,
-                        firstName: firstName,
-                        lastName: lastName,
-                        displayName: firstName + ' ' + lastName,
-                        phoneNumber: phoneNumber,
-                        add: add,
-                        password: password
+                        email: data.email,
+                        password: data.password,
+                        firstName: data.firstName,
+                        lastName: data.lastName,
+                        displayName: data.firstName + ' ' + data.lastName,
+                        phoneNumber: data.phoneNumber,
+                        address: data.address
                     })
-                console.log('end')
-                history.push('/Home')
-            }).catch((e) => {
+                history.push('/')
+            }
+        } catch (e) {
             console.log(e)
-        })
-    }
+        }
+    };
 
-    const handleClickCancle = () => {
-        history.push('/Login')
-    }
     return (
-        <Grid item justify={'center'} style={{margin: 'auto'}} container xs={10}>
-            <h1>Sign Up</h1>
-            <Grid style={{margin: '20px 0'}}>
-                <TextField fullWidth label={'First Name'} onChange={handleChangeFirstName}/>
-                <TextField fullWidth label={'Last Name'} onChange={handleChangeLastName}/>
-                <TextField fullWidth required label={'Email'} onChange={handleChangeEmail}/>
-                <TextField fullWidth label={'Số điện thoại'} onChange={handleChangePhoneNumber} type={'number'}/>
-                <TextField fullWidth label={'Địa chỉ'} onChange={handleChangeAdd}/>
-                <TextField fullWidth required label={'Mật khẩu'} type={'password'} onChange={handleChangePassword}/>
-            </Grid>
-            <Button variant={'outlined'} color={'primary'} onClick={handleClickSignUp}>Sign Up</Button>
-            <Button variant={'outlined'} color={'primary'} onClick={handleClickCancle}>Cancle</Button>
-        </Grid>
+        <form onSubmit={methods.handleSubmit(_onSubmit)} style={{margin: 'auto'}}>
+            <Typography style={{textAlign: 'center', color: 'purple', fontFamily: 'UTM Avo', fontSize: 20}}> Please Sign
+                up :</Typography>
+            {_renderFieds()}
+            {
+                error &&
+                <Typography style={{color: 'red'}}> {error} </Typography>
+            }
+            <div style={{textAlign: 'center'}}>
+                <Button type={'submit'} variant="contained" color="primary" style={{marginTop: 10, width: 140}}>
+                    Sign Up
+                </Button>
+            </div>
+
+        </form>
     )
 }

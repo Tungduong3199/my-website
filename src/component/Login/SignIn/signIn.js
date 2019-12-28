@@ -30,7 +30,7 @@ function SignIn() {
         auth.signInWithEmailAndPassword(email,passWord)
             .then((callback)=>{
                 window.localStorage.setItem("userId",auth.currentUser.uid)
-                history.push('/Home');
+                history.push('/');
                 console.log(callback,"callback")
             }).catch(function (err) {
             console.log(err)
