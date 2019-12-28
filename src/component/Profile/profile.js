@@ -12,7 +12,6 @@ import Avatar from "@material-ui/core/Avatar";
 export default function () {
 
     const history = useHistory();
-    const [displayName, setDisplayName] = useState('');
     const [error, setError] = useState('');
     const methods = useForm();
     const [user, setUser] = useState({});
@@ -68,8 +67,9 @@ export default function () {
         // setFormValues(data)
         try {
             console.log(auth)
+            console.log(data.email)
             await
-                firestore.collection('user').doc(data.email)
+                firestore.collection('user').doc(auth.currentUser.email)
                     .update({
                         email: data.email,
                         firstName: data.firstName,
@@ -80,7 +80,7 @@ export default function () {
                         photoURL: photoURL
                     })
                     .then(() => {
-                        auth.currentUser.updateProfile({displayName, photoURL})
+                        auth.currentUser.updateProfile({photoURL})
                         console.log(photoURL)
                         history.push('/MyAccount')
                     })

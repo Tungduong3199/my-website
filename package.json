@@ -28,7 +28,8 @@
     "react-scripts": "3.3.0",
     "react-swipeable-views": "^0.13.3",
     "reactn": "^2.2.4",
-    "use-global-hook": "^0.1.12"
+    "use-global-hook": "^0.1.12",
+    "yarn": "^1.21.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -52,6 +53,6 @@
     ]
   },
   "devDependencies": {
-    "eslint-plugin-react-hooks": "^2.3.0"
+    "webpack": "^4.41.4"
   }
 }

@@ -57,6 +57,17 @@ export default function ButtonAppBar() {
     };
 
     useEffect(() => {
+        const unregisterAuthObserver = auth.onAuthStateChanged(
+            (user) => {
+                // console.log(user)
+                setUser(user)
+            }
+        );
+        return () => {
+            unregisterAuthObserver()
+        }
+    }, []);
+    useEffect(() => {
         getUserData()
     }, []);
 
@@ -87,7 +98,6 @@ export default function ButtonAppBar() {
         }
     };
 
-
     return (
         <div className={classes.root}>
             <AppBar position="static">
@@ -102,7 +112,7 @@ export default function ButtonAppBar() {
                         <Grid>
                             <Button aria-controls="simple-menu" aria-haspopup="true"
                                     onClick={handleClick}>
-                                {user.photoURL?
+                                {user.photoURL ?
                                     <Avatar src={user.photoURL}/>
                                     :
                                     <Avatar>D</Avatar>
@@ -127,9 +137,14 @@ export default function ButtonAppBar() {
                             </Menu>
                         </Grid>
                         :
-                        <Button onClick={() => {
-                            history.push('/Login')
-                        }} color="inherit">Login</Button>
+                        <div>
+                            <Button onClick={() => {
+                                history.push('/SignIn')
+                            }} color={"inherit"} >Đăng nhập</Button>
+                            <Button onClick={() => {
+                                history.push('/SignUp')
+                            }} color={"inherit"}>Đăng ký</Button>
+                        </div>
                     }
                 </Toolbar>
             </AppBar>

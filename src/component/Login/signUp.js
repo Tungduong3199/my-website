@@ -8,6 +8,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import {useHistory} from "react-router-dom";
+import Grid from "@material-ui/core/Grid";
 
 export default function SignUp() {
 
@@ -56,7 +57,7 @@ export default function SignUp() {
                 InputProps: {
                     shrink: true,
                     startAdornment: <InputAdornment
-                        position="start">  </InputAdornment>,
+                        position="start"> </InputAdornment>,
                     endAdornment: <InputAdornment
                         style={{width: 50}}
                         position="end">
@@ -79,7 +80,7 @@ export default function SignUp() {
     const _onSubmit = async (data) => {
         setFormValues(data)
         try {
-            const result = await auth.createUserWithEmailAndPassword(data.email, data.password)
+            const result = await auth.createUserWithEmailAndPassword(data.phoneNumber, data.email, data.password)
             if (result) {
                 console.log('signUp', data)
                 firestore.collection('user').doc(data.email)
@@ -100,20 +101,24 @@ export default function SignUp() {
     };
 
     return (
-        <form onSubmit={methods.handleSubmit(_onSubmit)} style={{margin: 'auto'}}>
-            <Typography style={{textAlign: 'center', color: 'purple', fontFamily: 'UTM Avo', fontSize: 20}}> Please Sign
-                up :</Typography>
-            {_renderFieds()}
-            {
-                error &&
-                <Typography style={{color: 'red'}}> {error} </Typography>
-            }
-            <div style={{textAlign: 'center'}}>
-                <Button type={'submit'} variant="contained" color="primary" style={{marginTop: 10, width: 140}}>
-                    Sign Up
-                </Button>
-            </div>
-
-        </form>
+        <Grid item xs={10} sm={4} style={{margin: 'auto'}}>
+            <form onSubmit={methods.handleSubmit(_onSubmit)}>
+                <Typography variant={"h4"} style={{textAlign: 'center', fontFamily: 'UTM Avo'}}> Please Sign
+                    up </Typography>
+                {_renderFieds()}
+                {
+                    error &&
+                    <Typography style={{color: 'red'}}> {error} </Typography>
+                }
+                <Typography variant={"subtitle1"}>Đã có tài khoản <Button onClick={() => {
+                    history.push('/SignIn')
+                }} color={"primary"}>Đăng nhập</Button></Typography>
+                <div style={{textAlign: 'center'}}>
+                    <Button type={'submit'} variant="contained" color="primary" style={{marginTop: 10, width: 140}}>
+                        Sign Up
+                    </Button>
+                </div>
+            </form>
+        </Grid>
     )
 }
