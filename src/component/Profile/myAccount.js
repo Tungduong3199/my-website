@@ -16,6 +16,7 @@ function MyAccount(props) {
 
     const history = useHistory();
     const [user, setUser] = useState({});
+    const [name, setName] = useState('');
     const classes = useStyles();
 
     useEffect(() => {
@@ -34,6 +35,7 @@ function MyAccount(props) {
                         .then((doc) => {
                             if (doc.exists) {
                                 setUser({...doc.data()})
+                                setName(doc.data().lastName)
                             } else {
                                 console.log('k co data')
                             }
@@ -46,7 +48,7 @@ function MyAccount(props) {
             console.log(e.toString())
         }
     };
-    console.log(user.photoURL)
+    const avtName = name.trim().charAt(0);
     return (
         <Grid style={{margin: 'auto'}} justify={'center'} item sm={4} xs={10}>
             <h1>Thông Tin Tài Khoản</h1>
@@ -54,13 +56,15 @@ function MyAccount(props) {
             <p>Email: {user.email}</p>
             <p>Phone: {user.phoneNumber}</p>
             <p>Add: {user.address}</p>
-            <Avatar alt="Remy Sharp" src={user.photoURL}/>
+            {user.photoURL
+                ? <Avatar alt="Remy Sharp" src={user.photoURL}/>
+                : <Avatar>{avtName}</Avatar>}
             <Button className={classes.knot} variant={'contained'} color={'primary'} onClick={() => {
                 history.push('/Profile')
             }}>Update Profile</Button>
             <Button className={classes.knot} variant={'contained'} color={'primary'} onClick={() => {
                 history.push('/')
-            }}>Cancle</Button>
+            }}>Cancel</Button>
         </Grid>
     );
 }

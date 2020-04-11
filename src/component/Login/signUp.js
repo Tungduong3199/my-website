@@ -20,13 +20,13 @@ export default function SignUp() {
 
     const _renderFieds = () => {
         return renderFields({
-            firstName: {label: 'First Name', fullWidth: false, required: true, autoFocus: true},
-            lastName: {label: 'Last Name', fullWidth: false, required: true, autoFocus: true},
-            phoneNumber: {label: 'Phone Number', required: true, autoFocus: true},
-            address: {label: 'Address', required: true, autoFocus: true},
+            firstName: {label: 'Họ', fullWidth: false, required: true, autoFocus: true},
+            lastName: {label: 'Tên', fullWidth: false, required: true, autoFocus: true},
+            phoneNumber: {label: 'Số điện thoại', required: true, autoFocus: true},
+            address: {label: 'Địa chỉ', required: true, autoFocus: true},
             email: {label: 'Email', required: true, autoFocus: true},
             password: {
-                label: 'Password',
+                label: 'Mật khẩu',
                 type: show ? 'text' : 'password',
                 required: true,
                 InputProps: {
@@ -51,7 +51,7 @@ export default function SignUp() {
 
             },
             confirmPassword: {
-                label: 'ConfirmPassword',
+                label: 'Nhập lại mật khẩu',
                 type: show ? 'text' : 'password',
                 required: true,
                 InputProps: {
@@ -80,7 +80,7 @@ export default function SignUp() {
     const _onSubmit = async (data) => {
         setFormValues(data)
         try {
-            const result = await auth.createUserWithEmailAndPassword(data.phoneNumber, data.email, data.password)
+            const result = await auth.createUserWithEmailAndPassword(data.email, data.password)
             if (result) {
                 console.log('signUp', data)
                 firestore.collection('user').doc(data.email)
@@ -93,7 +93,7 @@ export default function SignUp() {
                         phoneNumber: data.phoneNumber,
                         address: data.address
                     })
-                history.push('/')
+                    history.push('/')
             }
         } catch (e) {
             console.log(e)
@@ -110,12 +110,16 @@ export default function SignUp() {
                     error &&
                     <Typography style={{color: 'red'}}> {error} </Typography>
                 }
-                <Typography variant={"subtitle1"}>Đã có tài khoản <Button onClick={() => {
+                <Typography variant={"subtitle1"}> Đã có tài khoản !<Button onClick={() => {
                     history.push('/SignIn')
-                }} color={"primary"}>Đăng nhập</Button></Typography>
+                }} color={"primary"}> Đăng nhập </Button>
+                </Typography>
                 <div style={{textAlign: 'center'}}>
-                    <Button type={'submit'} variant="contained" color="primary" style={{marginTop: 10, width: 140}}>
+                    <Button type={'submit'} color="primary" style={{marginTop: 10, width: 140}}>
                         Sign Up
+                    </Button>
+                    <Button onClick={()=>{history.push('/')}} color="primary" style={{marginTop: 10, width: 140}}>
+                        Cancel
                     </Button>
                 </div>
             </form>

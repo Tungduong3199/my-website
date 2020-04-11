@@ -132,7 +132,12 @@ export default function () {
                     error &&
                     <Typography style={{color: 'red'}}> {error} </Typography>
                 }
-                <input accept={'image/*'} type="file" onChange={handleChangePhotoURL} />
+                <div>
+                    <input style={{display: 'none'}} id="img" type="file" onChange={handleChangePhotoURL}/>
+                    <label for="img" style={{cursor: 'pointer'}}>
+                        Upload avatar
+                    </label>
+                </div>
                 <Avatar src={photoURL}/>
                 <div style={{textAlign: 'center'}}>
                     <Button type={'submit'} variant="contained" color="primary" style={{marginTop: 10, width: 140}}>
@@ -140,7 +145,7 @@ export default function () {
                     </Button>
                     <Button type={'submit'} onClick={handleClickCancle} variant="contained" color="primary"
                             style={{marginTop: 10, width: 140}}>
-                        Cancle
+                        Cancel
                     </Button>
                 </div>
 
